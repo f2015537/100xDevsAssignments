@@ -14,7 +14,37 @@
 */
 
 function calculateTotalSpentByCategory(transactions) {
-  return [];
+  let obj = {};
+  transactions.forEach((element) => {
+    const property = element.category;
+    const value = element.price;
+    const hasProp = obj.hasOwnProperty(property);
+    if (hasProp) {
+      obj[property] += value;
+    } else {
+      obj = { ...obj, [property]: element.price };
+    }
+  });
+  const itemArr = Object.entries(obj);
+  let ans = [];
+  itemArr.forEach((element) => {
+    const temp = {
+      category: element[0],
+      totalSpent: element[1],
+    };
+    ans.push(temp);
+  });
+  return ans;
 }
+
+calculateTotalSpentByCategory([
+  {
+    id: 1,
+    timestamp: 1656076800000,
+    price: 10,
+    category: "Food",
+    itemName: "Pizza",
+  },
+]);
 
 module.exports = calculateTotalSpentByCategory;
