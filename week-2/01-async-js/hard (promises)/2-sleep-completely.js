@@ -5,6 +5,19 @@
  */
 
 function sleep(milliseconds) {
+  return new Promise(function (resolve) {
+    const startTime = new Date();
+    let endTime = new Date();
+    let executionTime = endTime - startTime;
+    while (executionTime < milliseconds) {
+      endTime = new Date();
+      executionTime = endTime - startTime;
+    }
+    resolve();
+  });
 }
+
+// sleep(2000);
+// console.log("Hello");
 
 module.exports = sleep;
