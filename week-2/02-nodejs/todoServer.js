@@ -39,11 +39,108 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const fs = require("fs");
+const app = express();
+
+app.use(express.json());
+
+const readFromFile = () => {
+  return new Promise((resolve, reject) => {
+    fs.readFile("todos.json", "utf-8", (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
+
+app.get("/todos", async (req, res) => {
+  const data = await readFromFile();
+  const todos = JSON.parse(data);
+  res.status(200).json(todos);
+});
+
+app.get("/todos/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await readFromFile();
+  const todos = JSON.parse(data);
+  const todo = todos.find((todo) => todo.id === id);
+  if (todo) {
+    res.status(200).json(todo);
+  } else {
+    res.status(404).json({});
+  }
+});
+
+const writeToFile = (todos) => {
+  const data = JSON.stringify(todos, null, 2);
+  return new Promise((resolve, reject) => {
+    fs.writeFile("todos.json", data, "utf-8", (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
+app.post("/todos", async (req, res) => {
+  const { title, completed, description } = req.body;
+  const id = new Date();
+  const todo = {
+    id,
+    title,
+    completed,
+    description,
+  };
+  const data = await readFromFile();
+  const todos = JSON.parse(data);
+  todos.push(todo);
+  await writeToFile(todos);
+  res.status(201).json({ id });
+});
+
+app.put("/todos/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await readFromFile();
+  const todos = JSON.parse(data);
+  const todo = todos.find((todo) => todo.id === id);
+  if (todo) {
+    const { title, completed, description } = req.body;
+    if (title) {
+      todo.title = title;
+    }
+    if (completed) {
+      todo.completed = completed;
+    }
+    if (description) {
+      todo.description = description;
+    }
+    await writeToFile(todos);
+    res.status(200).json({});
+  } else {
+    res.status(404).json({});
+  }
+});
+
+app.delete("/todos/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = await readFromFile();
+  const todos = JSON.parse(data);
+  const todoIndex = todos.findIndex((todo) => todo.id === id);
+  if (todoIndex === -1) {
+    res.status(404).json({});
+  } else {
+    todos.splice(todoIndex, 1);
+    await writeToFile(todos);
+    res.status(200).json({});
+  }
+});
+
+app.listen(3000, () => console.log(`Listening on PORT 3000`));
+
+module.exports = app;
