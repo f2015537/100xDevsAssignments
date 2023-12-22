@@ -17,7 +17,4 @@ function sleep(milliseconds) {
   });
 }
 
-// sleep(2000);
-// console.log("Hello");
-
 module.exports = sleep;
