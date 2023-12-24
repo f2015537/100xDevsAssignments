@@ -43,7 +43,7 @@ app.get("/file/:filename", (req, res) => {
   });
 });
 
-app.get("/:_", (req, res) => {
+app.all("*", (req, res) => {
   res.status(404).send("Route not found");
 });
 
