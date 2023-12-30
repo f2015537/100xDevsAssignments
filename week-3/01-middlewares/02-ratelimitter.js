@@ -26,7 +26,6 @@ const rateLimiter = (req, res, next) => {
   } else {
     numberOfRequestsForUser[id] = 1;
   }
-  console.log(numberOfRequestsForUser);
   next();
 };
 
