@@ -5,7 +5,7 @@ async function courseExistsMiddleware(req, res, next) {
   const { courseId } = req.params;
   try {
     const course = await Course.findOne({ _id: courseId }).exec();
-    req.body.course = course;
+    req.body.courseId = courseId;
   } catch (error) {
     return res.status(404).json({ msg: "Invalid course id" });
   }

@@ -43,7 +43,7 @@ router.post(
     try {
       const updatedUser = await User.findOneAndUpdate(
         { username: req.body.username },
-        { $push: { purchasedCourses: req.body.course } },
+        { $push: { purchasedCourses: req.body.courseId } },
         { new: true }
       );
 
@@ -63,15 +63,18 @@ router.post(
 router.get("/purchasedCourses", authMiddleware, async (req, res) => {
   // Implement fetching purchased courses logic
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username }).populate(
+      "purchasedCourses"
+    );
     if (user) {
       const purchasedCourses = user.purchasedCourses;
       return res.json({ purchasedCourses });
     } else {
-      res.status(404);
+      res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    res.status(404);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
