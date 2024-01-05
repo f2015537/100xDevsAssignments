@@ -34,7 +34,8 @@
       function updateTodoInDom(todo) {
         const elementToUpdate = document.getElementById(todo.id);
         elementToUpdate.innerHTML = `<div>${todo.title}</div>
-        <div>${todo.description}</div>`;
+        <div>${todo.description}</div>
+        <br></br>`;
       }
 
       function updateState(newTodos) {
